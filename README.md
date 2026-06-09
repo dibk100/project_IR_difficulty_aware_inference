@@ -1,6 +1,6 @@
 # project_difficulty_aware_inference 🚀
-본 레포지토리는 개인 연구 프로젝트 **project_difficulty_aware_inference**를 정리한 공간.
-**Type** : 개인 연구 프로젝트 (Independent Research)
+본 레포지토리는 개인 연구 프로젝트 **project_difficulty_aware_inference**를 정리한 공간.   
+**Type** : 개인 연구 프로젝트 (Independent Research)   
 **Area** :
 * Dynamic Inference
 * Adaptive Computation
