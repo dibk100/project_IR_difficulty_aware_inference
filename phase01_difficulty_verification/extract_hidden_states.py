@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
+MODEL_NAME = "microsoft/Phi-3.5-mini-instruct"
 INPUT_PATH = "gsm8k_main_rollouts.jsonl"
 OUTPUT_PATH = "gsm8k_main_hidden_states.npz"
 

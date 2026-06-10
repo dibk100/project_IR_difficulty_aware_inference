@@ -38,10 +38,26 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
 - Last Token Representation
 - Mean Pooling Representation
 
+
+## Main Result
+
+| Model        | Representation | ROC-AUC | Accuracy |
+| ------------ | -------------- | ------: | -------: |
+| Llama-3.1-8B | Last Token     |  0.6889 |   0.7100 |
+| Llama-3.1-8B | Mean Pooling   |  0.7304 |   0.7400 |
+| Qwen2.5-7B   | Last Token     |  0.6974 |   0.8020 |
+| Qwen2.5-7B   | Mean Pooling   |  0.6774 |   0.7760 |
+
+- PCA/t-SNE에서는 명확한 분리가 보이지 않지만, Linear Probe를 사용하면 ROC-AUC ≈ 0.68~0.73 수준으로 Easy/Hard Difficulty Label을 예측할 수 있다.
+
+
 ## 📁 Folder Structure
 ```
 phase01_difficulty_verification/
 ├── README.md
+├── data
+├── output_llama_500
+├── output_qwen_500
 ├── run_rollouts.py
 ├── extract_hidden_states.py 
 ├── visualize_embeddings.py
@@ -70,10 +86,46 @@ phase01_difficulty_verification/
 - (결론) 가벼운 시각화로 구분되길 바랬지만, 명확하게 구분되지 않음. Logistic Regression으로 확인해야함
 
 > linear_probe.py
+- 목적 : PCA/t-SNE처럼 2차원 시각화에 의존하지 않고, 고차원 hidden representation 자체에 Easy/Hard를 구분할 수 있는 정보가 존재하는지 정량적으로 확인함.
+- 방법 : hidden representation을 입력으로 하고 Easy/Hard label을 정답으로 하여 Logistic Regression 분류기를 학습함.
+- 왜 Linear Probe인가? :
+    - 복잡한 모델을 사용하면 분류 성능이 좋아져도 hidden representation 자체에 정보가 있는지, 분류기가 새롭게 복잡한 패턴을 학습한 것인지 구분하기 어려움.
+    - 따라서 가장 단순한 선형 분류기를 사용하여, Easy/Hard 정보가 hidden representation에서 선형적으로 디코딩 가능한지 확인함.
+- 평가 지표 :
+    - Accuracy : 전체 문제 중 얼마나 맞췄는지
+    - Macro-F1 : 클래스 불균형 보완 지표
+    - ROC-AUC : 
+- (결론) PCA/t-SNE에서는 명확한 시각적 분리가 관찰되지 않았지만, Linear Probe에서는 ROC-AUC 약 0.69~0.73 수준으로 Easy/Hard label을 예측할 수 있었음.
+- (해석) Difficulty 관련 정보는 2차원 시각화에서는 뚜렷하게 드러나지 않지만, hidden representation 안에 선형적으로 디코딩 가능한 형태로 존재함.
+
+<!--
+ROC-AUC :
+무작위로 Hard 하나와 Easy 하나를 뽑았을 때,Hard가 더 높은 점수를 받을 확률
+
+예시 :
+Hard 문제 하나, Easy 문제 하나를 랩덤으로 뽑았을 때, 73%확률로 hard가 더 높은 difficulty score를 받을 확률?
+Hidden Representation으로부터 추출한 선형 score는 Easy 문제보다 Hard 문제를 약 73% 확률로 더 높게 평가
+
+sample 1 data가 Logistic Regression 내부로 들어가서 (z=wtx+b)의 값을 sigmoid씌워서 확률을 얻으면 
+문제 A → Hard 확률 0.96
+문제 B → Hard 확률 0.86
+문제 C → Hard 확률 0.38
+이런식.
+
+Accurancy는 hard확률 기준(0.5)로 hard와 easy를 나눔
+
+ROC-AUC는 기준(0.5)가 아니라 더 높은 점수르 받는지 관점
+
+ROC = threshold를 0~1까지 바꿔가며 분류 성능 변화를 그린 곡선
+AUC = 그 ROC 곡선 아래 면적
+
+ROC-AUC = 모든 threshold에서의 구분 능력을 하나의 숫자로 요약한 값
+
+-->
 
 
 ## 📝 실험 기록
-### LLAMA_gsm8k(Done)
+### LLAMA_gsm8k
 - model : meta-llama/Llama-3.1-8B-Instruct
 - dataset : gsm8k_main/socratic_test
     - sample 100, 300, 500
@@ -138,14 +190,9 @@ phase01_difficulty_verification/
 
 - (Next) 500개로 시도
 
-### LLAMA_gsm8k(ing)
-- model : meta-llama/Llama-3.1-8B-Instruct
-- dataset : gsm8k_main_test
-    - sample 500
-- 결과 : archived
-
 ### Solution03 : 코드 오류
 - (배경) 실험 정리하다가 발견한 큰 이슈.
 - (원인) run_rollouts.py에서 정답을 추출하는 re파싱(정규화, 문자열 비교) 때문에 조금이라도 틀리면 false로 함.
-- (해결)
-- (next 가정) pca나 t-sne에서 구분될수도
+- (해결) 해결함. 하지만 pca, t-sen 시각화 변화는 없음. liner probing 수치는 높아짐.
+
+
