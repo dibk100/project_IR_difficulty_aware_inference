@@ -2,6 +2,7 @@
 
 GSM8K (필수)와 MATH-500 (optional)을 HuggingFace Hub에서 받아
 로컬 data/ 디렉토리에 jsonl 형태로 저장한다.
+ + TIGER-Lab/MMLU-Pro도 다운
 
 이후 run_rollouts.py 등이 오프라인에서도 동작할 수 있도록
 HF cache에도 함께 남는다.
@@ -26,12 +27,12 @@ SOURCES = {
         "split": "test",
         "out": "gsm8k_main_test.jsonl",
     },
-    "math500": {
-        "path": "HuggingFaceH4/MATH-500",
+    "mmlu_pro": {
+        "path": "TIGER-Lab/MMLU-Pro",
         "config": None,
         "split": "test",
-        "out": "math500_test.jsonl",
-    },
+        "out": "mmlu_pro_test.jsonl",
+    }
 }
 
 

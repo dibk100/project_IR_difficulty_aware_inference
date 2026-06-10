@@ -24,8 +24,9 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
     - (additional) microsoft/Phi-3.5-mini-instruct
     - (optional) mistralai/Mistral-7B-Instruct-v0.3
 - dataset :
-    - (base) GSM8K (main, test)
+    - (base) GSM8K (main, test) → 수학 추론 난이도
     - (optional) MATH-500 
+    - (additional) MMLU-Pro → 일반/전문 지식 + 추론 난이도
 - Difficulty Label :   
 각 문제에 대해 3회의 독립적인 generation을 수행한다.
     - Easy : 3/3 정답

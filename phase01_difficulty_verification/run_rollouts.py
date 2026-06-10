@@ -16,7 +16,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ===== 실험 설정 =====
-MODEL_NAME = "microsoft/Phi-3.5-mini-instruct"
+MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
 NUM_SAMPLES = 500
 NUM_ROLLOUTS = 3
 DATASET_PATH = os.path.join(BASE_DIR, "data", "gsm8k_main_test.jsonl")
