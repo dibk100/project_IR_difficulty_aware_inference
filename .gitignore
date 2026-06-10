@@ -10,6 +10,7 @@ __pycache__/
 *jsonl
 *npz
 *output
+output_*
 
 # Distribution / packaging
 .Python

@@ -47,51 +47,14 @@ Research Question : Hidden Representation 안에 입력 난이도와 관련된 �
 - Linear Probe를 통해 Easy/Hard Difficulty Label과 관련된 정보가 Hidden Representation에 존재함을 확인
 
 ### Phase 02 : Difficulty Signal Discovery
+#### A. Difficulty Signal Localization
+질문 : Difficulty 정보는 어느 레이어에서 형성되는가?
 
-Research Question : 어떤 Representation-level Signal이 입력 난이도를 가장 잘 설명하는가?
+가설 : 초기 레이어에서 입력 난이도를 판단할 수 있다?   
+- layerskip논문은 초기 레이어에서 다음 토큰 예측이 부정확하고 후반 레이어가 예측이 수렴한다고 함
+- 내 연구는 다음 토큰 예측이 아닌 문제 난이도 예측(근거를 phae01에서 존재 자체를 확인함)
 
-목표 : 어떤 representation property가 difficulty를 설명하는지 탐색(어떤 representation property가 difficulty와 가장 강한 상관관계를 가지는지?)
-
-### Experiments
-
-* Entropy
-* Margin
-* Hidden State Norm
-* Representation Variance
-* Effective Rank
-* Intrinsic Dimension
-
-### Phase 03 : Signal Generalization
-
-목표 : 발견된 difficulty signal의 일반화 가능성 검증
-
-### Experiments
-
-* Llama-3-8B-Instruct
-* Qwen2.5-7B-Instruct
-* Additional Open LLMs
-
-### Research Question
-
-> 발견된 difficulty signal은 모델이 바뀌어도 유지되는가?
-
-### Phase 04 : Difficulty-Aware Dynamic Inference
-
-목표 : Difficulty Signal 기반 동적 계산 제어
-
-### Experiments
-
-* Early Exit
-* Layer Skipping
-* Adaptive Depth
-* Adaptive Compute Allocation
-* CALM-style Baseline
-* LayerSkip-style Baseline
-
-### Research Question
-
-> Difficulty Signal을 이용하여 추론 효율을 향상시킬 수 있는가?
-
+방법 : 각 레이어 hidden state에 대해 linear probe를 수행해서 측정   
 
 # 📁 Folder Structure
 
