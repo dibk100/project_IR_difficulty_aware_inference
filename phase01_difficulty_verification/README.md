@@ -135,6 +135,12 @@ phase01_difficulty_verification/
     - 주어진 입력을 한 번 forward pass 해서 내부 hidden state만 반환하는 것
     - 시스템적으로 비효율적임. 하지만 실험구분을 위해 이렇게 진행하겠음
 
+> visualize_embeddings.py   
+- 목적 : hidden representation은 dim이 큼(4096-d). 그래서 시각적으로 빠르게 보기 위해 PCA와 t-SNE로 압축하여 보려고 함.
+- PCA : 분산이 큰 방향을 찾아서 압축(분산 보존이 강함)
+- t-SNE : 원래 공간에서 가까운 점들이 2차원 공간에서도 가깝게 보이도록 함.
+- (결론) 가벼운 시각화로 구분되길 바랬지만, 명확하게 구분되지 않음. Logistic Regression으로 확인해야함
+
 <!--
 실행 순서
 python run_rollouts.py -> python extract_hidden_states.py -> python visualize_embeddings.py   
@@ -159,7 +165,7 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
     4. 모델의 문제(llama가 아닌 다른 모델 실험)
     5. 모델 크기 문제(7b가 아닌 더 큰/작은 모델로 실험)
 
-### Test : Representation
+### Test01 : Representation
 - model : Qwen/Qwen2.5-7B-Instruct
 - dataset : gsm8k_main/socratic_test
     - sample 300
@@ -173,3 +179,17 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
 - (원인 추정) 현재는 **마지막 토큰 하나의 hidden state**를 뽑아서 진행함. 마지막 토큰이 입력문장 전체를 의미하지 못하는 것일 수 있어서 hidden state의 mean pooling을 시도해보기
 - (이유) 입력된 토큰 시퀀스 전체(문장)의 hidden state를 보기 위해 평균
 - (정리) 입력 문제를 대표하는 벡터를 마지막 토큰의 hidden vs 전체의 hidden으로 구분해서 easy/hard가 구분되는지 봐야함
+- (결과)
+    - last token: 시각적 분리 안 됨
+    - mean pooling: 시각적 분리 안 됨
+
+### Test02 : 시각화
+- model : Qwen/Qwen2.5-7B-Instruct
+- dataset : gsm8k_main/socratic_test
+    - sample 300
+- (가설) 정보가 있지만 2D시각화에서 안보임. 즉 비선형적으로만 존재하고 현재 데이터셋과 모델로는 약함. 아니면 라벨 정의가 너무 거침
+
+#### 01.Linear_probe
+- (how) logistic regression으로 easy/hard 예측해서 ROC-AUC, Macro-F1 측정해보기
+- (판단 기준) 
+    - ROC-AUC ≈ 0.50 : 선형적으로 구분 가능한 정보 거의 없음

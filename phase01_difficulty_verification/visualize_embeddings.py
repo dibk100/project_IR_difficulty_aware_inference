@@ -30,11 +30,8 @@ def plot_2d(points, labels, title, output_path):
     print("Saved:", output_path)
 
 
-def main():
-    data = np.load(INPUT_PATH, allow_pickle=True)
-    embeddings = data["embeddings"]
-    labels = data["labels"]
-
+def visualize_one(embeddings, labels, name):
+    print(f"\n[{name}]")
     print("Embedding shape:", embeddings.shape)
     print("Easy:", np.sum(labels == "easy"))
     print("Hard:", np.sum(labels == "hard"))
@@ -45,8 +42,8 @@ def main():
     plot_2d(
         pca_points,
         labels,
-        "PCA of Last-Layer Hidden Representations",
-        "pca_easy_hard.png",
+        f"PCA of {name} Hidden Representations",
+        f"pca_easy_hard_{name}.png",
     )
 
     tsne = TSNE(
@@ -61,8 +58,29 @@ def main():
     plot_2d(
         tsne_points,
         labels,
-        "t-SNE of Last-Layer Hidden Representations",
-        "tsne_easy_hard.png",
+        f"t-SNE of {name} Hidden Representations",
+        f"tsne_easy_hard_{name}.png",
+    )
+
+
+def main():
+    data = np.load(INPUT_PATH, allow_pickle=True)
+
+    labels = data["labels"]
+
+    embeddings_last = data["embeddings_last"]
+    embeddings_mean = data["embeddings_mean"]
+
+    visualize_one(
+        embeddings=embeddings_last,
+        labels=labels,
+        name="last_token",
+    )
+
+    visualize_one(
+        embeddings=embeddings_mean,
+        labels=labels,
+        name="mean_pooling",
     )
 
 

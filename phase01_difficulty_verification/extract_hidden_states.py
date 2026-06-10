@@ -27,7 +27,8 @@ def main():
     )
     model.eval()
 
-    embeddings = []
+    embeddings_last = []
+    embeddings_mean = []
     labels = []
     ids = []
     questions = []
@@ -35,7 +36,7 @@ def main():
     with open(INPUT_PATH, "r", encoding="utf-8") as f:
         records = [json.loads(line) for line in f]
 
-    for record in tqdm(records):
+    for idx, record in enumerate(tqdm(records)):
         question = record["question"]
         prompt = build_prompt(question)
 
@@ -43,7 +44,7 @@ def main():
         input_ids = tokenizer.apply_chat_template(
             messages,
             return_tensors="pt",
-            add_generation_prompt=False,             # True로 설정하면, 어시스턴트 응답 시작 토큰 추가됨. 내 연구에서는 질문의 마지막 토큰이 필요해서 False
+            add_generation_prompt=False,
         ).to(model.device)
 
         with torch.no_grad():
@@ -52,30 +53,39 @@ def main():
                 output_hidden_states=True,
                 use_cache=False,
             )
-        
-        print("> hidden state 사이즈 확인해보기(레이어수 추정) : ",len(outputs.hidden_states))
-        last_hidden = outputs.hidden_states[-1]             # 마지막 레이어의 출력
-        print("> last_hidden shape 확인해보기[batch_size, seq_len, hidden_dim] : ",last_hidden.shape)          
 
-        # Last layer, last input token representation
-        # last_hidden[0, -1, :] : 문제의 마지막 토큰의 dim차원 hidden representation(h_t를 가져옴)
-        rep = last_hidden[0, -1, :].detach().float().cpu().numpy()
+        last_hidden = outputs.hidden_states[-1]
 
-        embeddings.append(rep)
+        if idx == 0:
+            print("> hidden state 개수:", len(outputs.hidden_states))
+            print("> last_hidden shape [batch_size, seq_len, hidden_dim]:", last_hidden.shape)
+            print("> decoded input example:")
+            print(tokenizer.decode(input_ids[0]))
+
+        # 1. Last layer, last token representation
+        rep_last = last_hidden[0, -1, :].detach().float().cpu().numpy()
+
+        # 2. Last layer, mean pooling over all input tokens
+        rep_mean = last_hidden[0].mean(dim=0).detach().float().cpu().numpy()
+
+        embeddings_last.append(rep_last)
+        embeddings_mean.append(rep_mean)
         labels.append(record["label"])
         ids.append(record["id"])
         questions.append(question)
 
     np.savez(
         OUTPUT_PATH,
-        embeddings=np.stack(embeddings),
+        embeddings_last=np.stack(embeddings_last),
+        embeddings_mean=np.stack(embeddings_mean),
         labels=np.array(labels),
         ids=np.array(ids),
         questions=np.array(questions),
     )
 
     print("Saved:", OUTPUT_PATH)
-    print("Embedding shape:", np.stack(embeddings).shape)
+    print("Last-token embedding shape:", np.stack(embeddings_last).shape)
+    print("Mean-pooling embedding shape:", np.stack(embeddings_mean).shape)
 
 
 if __name__ == "__main__":
