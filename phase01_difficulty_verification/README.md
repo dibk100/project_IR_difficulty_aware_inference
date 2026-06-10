@@ -116,7 +116,8 @@ phase01_difficulty_verification/
 ├── README.md
 ├── requirements.txt
 ├── run_rollouts.py
-├── extract_hidden_states.py
+├── extract_hidden_states.py linear_probe
+├── visualize_embeddings.py
 └── visualize_embeddings.py
 ```
 
@@ -140,6 +141,8 @@ phase01_difficulty_verification/
 - PCA : 분산이 큰 방향을 찾아서 압축(분산 보존이 강함)
 - t-SNE : 원래 공간에서 가까운 점들이 2차원 공간에서도 가깝게 보이도록 함.
 - (결론) 가벼운 시각화로 구분되길 바랬지만, 명확하게 구분되지 않음. Logistic Regression으로 확인해야함
+
+> linear_probe.py
 
 <!--
 실행 순서
@@ -193,3 +196,23 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
 - (how) logistic regression으로 easy/hard 예측해서 ROC-AUC, Macro-F1 측정해보기
 - (판단 기준) 
     - ROC-AUC ≈ 0.50 : 선형적으로 구분 가능한 정보 거의 없음
+- (결과)
+    ```
+    [last_token]
+    Embedding shape: (300, 4096)
+    Easy: 122
+    Hard: 178
+    accuracy: 0.6300 ± 0.0756
+    roc_auc: 0.6799 ± 0.0699
+    macro_f1: 0.6217 ± 0.0765
+
+    [mean_pooling]
+    Embedding shape: (300, 4096)
+    Easy: 122
+    Hard: 178
+    accuracy: 0.5967 ± 0.0306
+    roc_auc: 0.6083 ± 0.0259
+    macro_f1: 0.5880 ± 0.0310
+    ```
+- (해석) Llama-3.1-8B-Instruct의 last-layer hidden representation 안에 Easy/Hard를 구분하는 정보가 약하게 존재한다라고 말할 수 있을거 같음. 근데 약함.
+- (Next) 500개로 시도
