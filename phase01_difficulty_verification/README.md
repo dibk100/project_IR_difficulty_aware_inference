@@ -1,6 +1,4 @@
-# phase01_difficulty_verification
-## Goal
-> 목표 : Llama-3-8B-Instruct에서 Easy/Hard 문제가 hidden representation 공간에서 분리되는지 확인하기   
+# phase01 : difficulty_verification
 
 본 단계의 목표는 LLM의 hidden representation 안에 difficulty 정보가 존재하는지 검증하는 것이다.
 
@@ -10,115 +8,44 @@
 
 - 참고 논문 : The LLM Already Knows: Estimating LLM-Perceived Question Difficulty via Hidden Representations(EMNLP 2025)  
 
-### 작업 요약
-```
-    Llama-3-8B 실행
-    ↓
-    hidden state 추출
-    ↓
-    Easy/Hard 생성
-    ↓
-    PCA / t-SNE
-```
+<!--
+실행 순서
+python run_rollouts.py -> python extract_hidden_states.py -> python visualize_embeddings.py -> linear_probe.py
+
+bash run_all.sh
+
+NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
+-->
 
 ### 실험 세팅
 - model : 
-    - meta-llama/Llama-3.1-8B-Instruct
-    - Qwen/Qwen2.5-7B-Instruct
-    - microsoft/Phi-3.5-mini-instruct
-    - mistralai/Mistral-7B-Instruct-v0.3
+    - (base) meta-llama/Llama-3.1-8B-Instruct
+    - (additional) Qwen/Qwen2.5-7B-Instruct
+    - (optional) microsoft/Phi-3.5-mini-instruct
+    - (optional) mistralai/Mistral-7B-Instruct-v0.3
 - dataset :
-    - GSM8K
-    - MATH-500 (optional)
+    - (base) GSM8K (main, test)
+    - (optional) MATH-500 
 - Difficulty Label :   
 각 문제에 대해 3회의 독립적인 generation을 수행한다.
     - Easy : 3/3 정답
-    - Hard : 그 외 모든 경우   
-*해당 정의는 The LLM Already Knows 논문의 difficulty labeling 방식을 참고
+    - Hard : 그 외 모든 경우  
 
-### Method
-Step 1. Difficulty Label Generation   
-```
-Question
-    ↓
-3 Independent Rollouts
-    ↓
-Correctness Evaluation
-    ↓
-Easy / Hard Label
-```
-
-Step 2. Hidden State Extraction
-
-입력 질문만을 사용하여 hidden representation을 추출한다.
-
-```
-사용 정보:
-
-Last Layer Hidden State
-Last Input Token Representation
-outputs = model(
-    **inputs,
-    output_hidden_states=True
-)
-
-last_hidden = outputs.hidden_states[-1]
-representation = last_hidden[0, -1, :]
-```
-
-Step 3. Representation Visualization
-
-Easy / Hard 문제의 hidden representation을 저차원 공간으로 투영하여 시각화한다.
-
-Methods:
-- PCA
-- t-SNE
-
-```
-Hidden Representation
-        ↓
-PCA / t-SNE
-        ↓
-Easy vs Hard Visualization
-```
-
-### Success Criteria
-- Minimum Success
-    - Easy 문제와 Hard 문제가 representation space에서 부분적으로라도 분리되는 현상이 관찰된다.
-
-- Expected Success
-    - Difficulty label과 hidden representation 사이의 구조적 차이가 시각적으로 확인된다.
-
-### Expected Output
-- Visualization
-    - PCA Plot
-    - t-SNE Plot
-- Dataset
-    - Easy Question Set
-    - Hard Question Set
+    *해당 정의는 The LLM Already Knows 논문의 difficulty labeling 방식을 참고
 
 ### Representation
-Hidden State Embeddings
-
-### Relation to Future Phases
-
-Phase 01은 hidden representation 안에 difficulty 정보가 존재하는지를 검증하는 단계이다.
-
-만약 Easy/Hard 분리가 관찰된다면 다음 단계에서는 다음 질문을 탐구한다.
-
-어떤 representation property가 이러한 difficulty 정보를 설명하는가?
-
-이는 Phase 02 (Difficulty Signal Discovery)로 이어진다.
+- Last Layer Hidden Representation
+- Last Token Representation
+- Mean Pooling Representation
 
 ## 📁 Folder Structure
 ```
 phase01_difficulty_verification/
 ├── README.md
-├── requirements.txt
 ├── run_rollouts.py
-├── extract_hidden_states.py linear_probe
+├── extract_hidden_states.py 
 ├── visualize_embeddings.py
-└── visualize_embeddings.py
+└── linear_probe.py
 ```
 
 > run_rollouts.py   
@@ -126,7 +53,7 @@ phase01_difficulty_verification/
 - 방법 : 실험 세팅에 Difficulty Label에 내용 작성해둠.
 - (model input) 프롬프트 템플릿 고정, gsm8k 질문
 - (model output) 정답 text (후처리를 통해 답만 추출)
-- (saved 형태) jsonl에 입력, 답변 생성, 정답 여부 판정, 라벨
+- (fin output 형태 jsonl) id, question(입력), 
 
 > extract_hidden_states.py
 - 목적 : 이미 만들어진 easy/hard라벨을 가져와서 각 질문의 hidden representation을 추출함.
@@ -144,14 +71,6 @@ phase01_difficulty_verification/
 
 > linear_probe.py
 
-<!--
-실행 순서
-python run_rollouts.py -> python extract_hidden_states.py -> python visualize_embeddings.py   
-
-bash run_all.sh
-
-NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
--->
 
 ## 📝 실험 기록
 ### LLAMA_gsm8k(Done)
@@ -162,13 +81,13 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
     - easy/hard는 불균형 없이 라벨이 균형적
     - 시각적으로 잘 구분이 되지 않음.
 - Solution :
-    1. representation 위치 문제
-    2. 시각화 방법 문제
-    3. 데이터셋의 문제(gsm8k)
-    4. 모델의 문제(llama가 아닌 다른 모델 실험)
-    5. 모델 크기 문제(7b가 아닌 더 큰/작은 모델로 실험)
+    1. (Done)representation 위치 문제(Done)
+    2. (Success)시각화 방법 문제
+    3. (PASS)데이터셋의 문제(gsm8k)
+    4. (PASS)모델의 문제(llama가 아닌 다른 모델 실험)
+    5. (PASS)모델 크기 문제(7b가 아닌 더 큰/작은 모델로 실험)
 
-### Test01 : Representation
+### Solution01 : Representation
 - model : Qwen/Qwen2.5-7B-Instruct
 - dataset : gsm8k_main/socratic_test
     - sample 300
@@ -186,7 +105,7 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
     - last token: 시각적 분리 안 됨
     - mean pooling: 시각적 분리 안 됨
 
-### Test02 : 시각화
+### Solution02 : 시각화
 - model : Qwen/Qwen2.5-7B-Instruct
 - dataset : gsm8k_main/socratic_test
     - sample 300
@@ -214,5 +133,19 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
     roc_auc: 0.6083 ± 0.0259
     macro_f1: 0.5880 ± 0.0310
     ```
-- (해석) Llama-3.1-8B-Instruct의 last-layer hidden representation 안에 Easy/Hard를 구분하는 정보가 약하게 존재한다라고 말할 수 있을거 같음. 근데 약함.
+- (해석) Llama-3.1-8B-Instruct의 last-layer hidden representation 안에 Easy/Hard를 구분하는 정보가 약하게 존재하는 것으로 보인다. 
+다만 ROC-AUC ≈ 0.68 수준으로, 정보의 존재는 확인되었지만 강한 분리 신호라고 보기는 어렵다.
+
 - (Next) 500개로 시도
+
+### LLAMA_gsm8k(ing)
+- model : meta-llama/Llama-3.1-8B-Instruct
+- dataset : gsm8k_main_test
+    - sample 500
+- 결과 : archived
+
+### Solution03 : 코드 오류
+- (배경) 실험 정리하다가 발견한 큰 이슈.
+- (원인) run_rollouts.py에서 정답을 추출하는 re파싱(정규화, 문자열 비교) 때문에 조금이라도 틀리면 false로 함.
+- (해결)
+- (next 가정) pca나 t-sne에서 구분될수도

@@ -9,6 +9,7 @@ __pycache__/
 *data
 *jsonl
 *npz
+*output
 
 # Distribution / packaging
 .Python

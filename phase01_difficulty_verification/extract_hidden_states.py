@@ -5,8 +5,8 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
-INPUT_PATH = "gsm8k_socratic_rollouts.jsonl"
-OUTPUT_PATH = "gsm8k_socratic_hidden_states.npz"
+INPUT_PATH = "gsm8k_main_rollouts.jsonl"
+OUTPUT_PATH = "gsm8k_main_hidden_states.npz"
 
 
 def build_prompt(question: str):

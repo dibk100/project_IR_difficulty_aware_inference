@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
-INPUT_PATH = "gsm8k_socratic_hidden_states.npz"
+INPUT_PATH = "gsm8k_main_hidden_states.npz"
 
 
 def plot_2d(points, labels, title, output_path):

@@ -26,29 +26,31 @@
 
 최종적으로는 입력 난이도에 따라 계산량을 동적으로 조절하는 Difficulty-Aware Dynamic Inference Framework를 목표로 한다.
 
-## 🧪 Research Roadmap(update.2026-06-09) 
-### Phase 01 : Difficulty Information Verification
+## 🧪 Research Roadmap(update.2026-06-10) 
+### Phase 01 : Difficulty Information Verification(ing/Completed)
 
-목표 : Hidden representation 안에 difficulty 정보가 실제로 존재하는지 검증
+Research Question : Hidden Representation 안에 입력 난이도와 관련된 정보가 존재하는가?
 
 ### Experiments
 
-* Llama-3-8B-Instruct
-* GSM8K
-* MATH-500
+* Model : Llama-3-8B-Instruct(base), Qwen/Qwen2.5-7B-Instruct(additional)
+* Dataset : GSM8K
+    - main, test
+    - sample 500
 * Easy / Hard Difficulty Labeling
 * Hidden State Extraction
-* PCA Visualization
-* t-SNE Visualization
+* (Visualization) PCA ,t-SNE
+* (Analysis) Linear Probe 
 
-### Research Question
-
-> Easy 문제와 Hard 문제는 hidden representation 공간에서 분리되는가?
-
+### Findings
+- PCA, t-SNE에서는 명확한 시각적 분리가 관찰되지 않음
+- Linear Probe를 통해 Easy/Hard Difficulty Label과 관련된 정보가 Hidden Representation에 존재함을 확인
 
 ### Phase 02 : Difficulty Signal Discovery
 
-목표 : 어떤 representation property가 difficulty를 설명하는지 탐색
+Research Question : 어떤 Representation-level Signal이 입력 난이도를 가장 잘 설명하는가?
+
+목표 : 어떤 representation property가 difficulty를 설명하는지 탐색(어떤 representation property가 difficulty와 가장 강한 상관관계를 가지는지?)
 
 ### Experiments
 
@@ -58,10 +60,6 @@
 * Representation Variance
 * Effective Rank
 * Intrinsic Dimension
-
-### Research Question
-
-> 어떤 representation property가 difficulty와 가장 강한 상관관계를 가지는가?
 
 ### Phase 03 : Signal Generalization
 

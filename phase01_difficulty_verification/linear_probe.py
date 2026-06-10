@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, cross_validate
 
 
-INPUT_PATH = "gsm8k_socratic_hidden_states.npz"
+INPUT_PATH = "gsm8k_main_hidden_states.npz"
 RANDOM_STATE = 42
 N_SPLITS = 5
 
