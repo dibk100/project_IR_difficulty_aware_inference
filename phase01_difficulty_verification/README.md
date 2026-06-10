@@ -21,7 +21,7 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
 - model : 
     - (base) meta-llama/Llama-3.1-8B-Instruct
     - (additional) Qwen/Qwen2.5-7B-Instruct
-    - (optional) microsoft/Phi-3.5-mini-instruct
+    - (additional) microsoft/Phi-3.5-mini-instruct
     - (optional) mistralai/Mistral-7B-Instruct-v0.3
 - dataset :
     - (base) GSM8K (main, test)
@@ -41,15 +41,41 @@ NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
 
 ## Main Result
 
-| Model        | Representation | ROC-AUC | Accuracy |
-| ------------ | -------------- | ------: | -------: |
-| Llama-3.1-8B | Last Token     |  0.6889 |   0.7100 |
-| Llama-3.1-8B | Mean Pooling   |  0.7304 |   0.7400 |
-| Qwen2.5-7B   | Last Token     |  0.6974 |   0.8020 |
-| Qwen2.5-7B   | Mean Pooling   |  0.6774 |   0.7760 |
+| Model                 | Hidden Dim | Easy | Hard | Representation |            Accuracy |             ROC-AUC |            Macro-F1 |
+| --------------------- | ---------: | ---: | ---: | -------------- | ------------------: | ------------------: | ------------------: |
+| Llama-3.1-8B-Instruct |       4096 |  373 |  127 | Last Token     |     0.7100 ± 0.0190 |     0.6889 ± 0.0275 |     0.6162 ± 0.0267 |
+| Llama-3.1-8B-Instruct |       4096 |  373 |  127 | Mean Pooling   |     0.7400 ± 0.0346 | **0.7304 ± 0.0299** | **0.6418 ± 0.0627** |
+| Qwen2.5-7B-Instruct   |       3584 |  410 |   90 | Last Token     | **0.8020 ± 0.0075** | **0.6974 ± 0.0618** | **0.6430 ± 0.0438** |
+| Qwen2.5-7B-Instruct   |       3584 |  410 |   90 | Mean Pooling   |     0.7760 ± 0.0326 |     0.6774 ± 0.0803 |     0.5805 ± 0.0812 |
+| Phi-3.5-mini-instruct |       3072 |  357 |  143 | Last Token     |     0.7100 ± 0.0363 | **0.7360 ± 0.0536** | **0.6413 ± 0.0402** |
+| Phi-3.5-mini-instruct |       3072 |  357 |  143 | Mean Pooling   |     0.7180 ± 0.0392 |     0.6975 ± 0.0425 |     0.6403 ± 0.0407 |
 
-- PCA/t-SNE에서는 명확한 분리가 보이지 않지만, Linear Probe를 사용하면 ROC-AUC ≈ 0.68~0.73 수준으로 Easy/Hard Difficulty Label을 예측할 수 있다.
+## Conclusion
 
+| Model                 | Best Representation | Best ROC-AUC |
+| --------------------- | ------------------- | -----------: |
+| Llama-3.1-8B-Instruct | Mean Pooling        |       0.7304 |
+| Qwen2.5-7B-Instruct   | Last Token          |       0.6974 |
+| Phi-3.5-mini-instruct | Last Token          |   **0.7360** |
+
+1. PCA / t-SNE 시각화 : 명확한 Easy/Hard 분리 관찰되지 않음
+2. Linear Probe : 모든 모델에서 ROC-AUC ≈ 0.69~0.74
+3. 결론 :
+- Hidden Representation 안에 Difficulty 관련 정보가 존재한다고 볼 수 있다.
+- 해당 정보는 선형적으로 디코딩 가능하고, 특정 모델에만 나타나는 현상은 아니다.
+
+<!--
+Hidden Representation 안의 정보를 복잡한 모델 없이, 단순한 선형 함수만으로도 Easy/Hard 라벨로 어느 정도 읽어낼 수 있다.
+
+hidden representation을 h라고 할 때 Linear Probe는 대략 : score=wTh+b
+h = LLM hidden representation
+w = linear probe가 학습한 가중치
+b = bias
+score = Easy/Hard를 구분하기 위한 점수
+
+즉 Linear Probe는 hidden representation을 복잡하게 변형하지 않고, 4096차원 벡터의 각 방향에 가중치를 곱해서 더하는 방식
+복잡한 MLP나 Transformer를 붙여야만 구분되는 게 아니라, 단순한 직선/초평면 하나로도 Easy와 Hard가 어느 정도 구분된다.
+-->
 
 ## 📁 Folder Structure
 ```
