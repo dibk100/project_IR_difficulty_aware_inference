@@ -14,7 +14,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 # ===== 실험 설정 =====
 MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"  # 난이도를 측정할 대상 모델
-NUM_SAMPLES = 100        # 사용할 문제 수 (먼저 100, 잘 되면 300~500으로 확장)
+NUM_SAMPLES = 500        # 사용할 문제 수 (먼저 100, 잘 되면 300~500으로 확장)
 NUM_ROLLOUTS = 3         # 문제당 독립 생성 횟수 (3/3 정답 → easy)
 OUTPUT_PATH = "gsm8k_rollouts.jsonl"  # 라벨링 결과 저장 경로
 

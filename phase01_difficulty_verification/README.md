@@ -118,4 +118,8 @@ phase01_difficulty_verification/
 
 실행 순서
 python run_rollouts.py -> python extract_hidden_states.py -> python visualize_embeddings.py   
+
+bash run_all.sh
+
+
 NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
