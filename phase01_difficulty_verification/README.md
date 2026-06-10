@@ -1,5 +1,5 @@
 # phase01_difficulty_verification
-### Goal
+## Goal
 > 목표 : Llama-3-8B-Instruct에서 Easy/Hard 문제가 hidden representation 공간에서 분리되는지 확인하기   
 
 본 단계의 목표는 LLM의 hidden representation 안에 difficulty 정보가 존재하는지 검증하는 것이다.
@@ -22,7 +22,11 @@
 ```
 
 ### 실험 세팅
-- model : meta-llama/Llama-3.1-8B-Instruct
+- model : 
+    - meta-llama/Llama-3.1-8B-Instruct
+    - Qwen/Qwen2.5-7B-Instruct
+    - microsoft/Phi-3.5-mini-instruct
+    - mistralai/Mistral-7B-Instruct-v0.3
 - dataset :
     - GSM8K
     - MATH-500 (optional)
@@ -96,7 +100,7 @@ Easy vs Hard Visualization
 ### Representation
 Hidden State Embeddings
 
-## Relation to Future Phases
+### Relation to Future Phases
 
 Phase 01은 hidden representation 안에 difficulty 정보가 존재하는지를 검증하는 단계이다.
 
@@ -106,7 +110,7 @@ Phase 01은 hidden representation 안에 difficulty 정보가 존재하는지를
 
 이는 Phase 02 (Difficulty Signal Discovery)로 이어진다.
 
-# 📁 Folder Structure
+## 📁 Folder Structure
 ```
 phase01_difficulty_verification/
 ├── README.md
@@ -116,10 +120,56 @@ phase01_difficulty_verification/
 └── visualize_embeddings.py
 ```
 
+> run_rollouts.py   
+- 목적 : 문제를 실제로 풀게 해서 easy/hard 라벨을 만들게 함.   
+- 방법 : 실험 세팅에 Difficulty Label에 내용 작성해둠.
+- (model input) 프롬프트 템플릿 고정, gsm8k 질문
+- (model output) 정답 text (후처리를 통해 답만 추출)
+- (saved 형태) jsonl에 입력, 답변 생성, 정답 여부 판정, 라벨
+
+> extract_hidden_states.py
+- 목적 : 이미 만들어진 easy/hard라벨을 가져와서 각 질문의 hidden representation을 추출함.
+- run_rollouts.py의 흐름처럼 모델에 질문을 넣지만, 답변을 생성하지 않게 함.
+- text답변 대신에 "hidden_state"를 반환해서 마지막 레이어의 마지막 토큰 벡터를 추출하여 npz로 저장.
+- 자세히 풀어서 설명하자면, 모델이 입력 prompt를 읽은 뒤, 다음 토큰을 예측할 수 있는 내부 상태까지 계산하고 실제로 다음 토큰을 생성하지 않게까지만 함.
+    - 주어진 입력을 한 번 forward pass 해서 내부 hidden state만 반환하는 것
+    - 시스템적으로 비효율적임. 하지만 실험구분을 위해 이렇게 진행하겠음
+
+<!--
 실행 순서
 python run_rollouts.py -> python extract_hidden_states.py -> python visualize_embeddings.py   
 
 bash run_all.sh
 
-
 NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
+-->
+
+## 📝 실험 기록
+### LLAMA_gsm8k(Done)
+- model : meta-llama/Llama-3.1-8B-Instruct
+- dataset : gsm8k_main/socratic_test
+    - sample 100, 300, 500
+- 결과 : archived_llama 폴더
+    - easy/hard는 불균형 없이 라벨이 균형적
+    - 시각적으로 잘 구분이 되지 않음.
+- Solution :
+    1. representation 위치 문제
+    2. 시각화 방법 문제
+    3. 데이터셋의 문제(gsm8k)
+    4. 모델의 문제(llama가 아닌 다른 모델 실험)
+    5. 모델 크기 문제(7b가 아닌 더 큰/작은 모델로 실험)
+
+### Test : Representation
+- model : Qwen/Qwen2.5-7B-Instruct
+- dataset : gsm8k_main/socratic_test
+    - sample 300
+
+#### 01. hidden representation 추출 설정
+- (원인 추정) llama instruct 모델에서는 chat template를 쓰면 마지막 토큰은 실제 질문 마직막 토큰이 아닌 assistant generation prompt 토큰일 가능성이 있다고 함.
+- (해결 방법) extract_hidden_states.py의 add_generation_prompt=False로 바꿈(해당 스크립트에 이유 작성함)
+- (결과) 그럼에도 불구하고 easy/hard가 구분되지 않음
+
+#### 02. hidden representation 추출 방법
+- (원인 추정) 현재는 **마지막 토큰 하나의 hidden state**를 뽑아서 진행함. 마지막 토큰이 입력문장 전체를 의미하지 못하는 것일 수 있어서 hidden state의 mean pooling을 시도해보기
+- (이유) 입력된 토큰 시퀀스 전체(문장)의 hidden state를 보기 위해 평균
+- (정리) 입력 문제를 대표하는 벡터를 마지막 토큰의 hidden vs 전체의 hidden으로 구분해서 easy/hard가 구분되는지 봐야함

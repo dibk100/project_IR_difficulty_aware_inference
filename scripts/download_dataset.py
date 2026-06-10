@@ -22,9 +22,9 @@ from datasets import load_dataset
 SOURCES = {
     "gsm8k": {
         "path": "gsm8k",
-        "config": "main",
+        "config": "socratic",           # main, socratic
         "split": "test",
-        "out": "gsm8k_test.jsonl",
+        "out": "gsm8k_socratic_test.jsonl",
     },
     "math500": {
         "path": "HuggingFaceH4/MATH-500",

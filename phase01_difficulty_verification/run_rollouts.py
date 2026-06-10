@@ -14,9 +14,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 # ===== 실험 설정 =====
 MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"  # 난이도를 측정할 대상 모델
-NUM_SAMPLES = 500        # 사용할 문제 수 (먼저 100, 잘 되면 300~500으로 확장)
+NUM_SAMPLES = 300        # 사용할 문제 수 (먼저 100, 잘 되면 300~500으로 확장)
 NUM_ROLLOUTS = 3         # 문제당 독립 생성 횟수 (3/3 정답 → easy)
-OUTPUT_PATH = "gsm8k_rollouts.jsonl"  # 라벨링 결과 저장 경로
+OUTPUT_PATH = "gsm8k_socratic_rollouts.jsonl"  # 라벨링 결과 저장 경로
 
 
 def extract_answer(text: str):
@@ -60,7 +60,7 @@ def build_prompt(question: str):
 
 def main():
     # GSM8K test split에서 앞쪽 NUM_SAMPLES개 문제만 로드
-    dataset = load_dataset("gsm8k", "main", split=f"test[:{NUM_SAMPLES}]")
+    dataset = load_dataset("gsm8k", "socratic", split=f"test[:{NUM_SAMPLES}]")
 
     # 토크나이저 + 모델 로드 (bf16, 가용 GPU에 자동 분산)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -83,7 +83,7 @@ def main():
             input_ids = tokenizer.apply_chat_template(
                 messages,
                 return_tensors="pt",
-                add_generation_prompt=True,   # 어시스턴트 응답 시작 토큰 추가
+                add_generation_prompt=True,   # 어시스턴트 응답 시작 토큰 추가 : 답변 생성하는 것이 목적이라 True로 설정함. extract_hidden_state에서는 Fasle로 수정
             ).to(model.device)
 
             rollouts = []
