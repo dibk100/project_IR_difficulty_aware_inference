@@ -55,6 +55,7 @@ Llama는 전반적으로 Mean Pooling이 우세한 반면, Phi는 후반 레이�
 ## 📁 Folder Structure
 ```
 phase02_layerwise_decodability/
+├── output_llama_500/
 ├── extract_layerwise_hidden_states.py
 ├── layerwise_probe.py
 ├── plot_layer_auc.py
@@ -62,6 +63,38 @@ phase02_layerwise_decodability/
 ```
 *phase01은 마지막 레이어에서 difficulty 존재 여부를 봤고
 *phase02는 모든 레이어에서 Difficulty 형성 위치 확인하기
+
+<!--
+```
+output_llama_500/
+├── gsm8k_layerwise_hidden_states.npz   (525MB) ← 핵심 산출물
+├── layerwise_probe_results.csv         (7.5KB) ← 레이어별 probe 지표
+├── layerwise_roc_auc.png               (214KB) ← AUC 곡선 시각화
+├── run_all.log                         (통합 로그)
+├── 01_extract_layerwise_hidden_states.log
+├── 02_layerwise_probe.log
+└── 03_plot_layer_auc.log
+```
+
+🧬 npz 데이터 아키텍처 (gsm8k_layerwise_hidden_states.npz)
+총 67개 배열 = 메타 3개 + (32 레이어 × 2 aggregation)
+
+메타 배열 (샘플 500개 공통):
+
+키	shape	내용
+labels	(500,)	easy/hard 라벨
+ids	(500,)	문제 id
+questions	(500,)	질문 텍스트
+레이어별 임베딩 (Llama-3.1-8B = 32 transformer layers):
+
+키 패턴	shape	내용
+layer01_last ~ layer32_last	(500, 4096)	각 레이어의 마지막 토큰 representation
+layer01_mean ~ layer32_mean	(500, 4096)	각 레이어의 mean-pooling representation
+hidden_dim = 4096 (Llama-3.1-8B), 레이어 1~32
+라벨 분포: easy 373 / hard 127
+-->
+
+
 
 ### 큰 스케치
 ```
