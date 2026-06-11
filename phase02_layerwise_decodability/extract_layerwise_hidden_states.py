@@ -5,6 +5,22 @@ import numpy as np
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+"""
+GSM8K 문제
+↓
+모델에 입력
+↓
+Layer 1~N의 hidden state 추출
+↓
+각 레이어마다
+  1. last-token representation
+  2. mean-pooling representation
+저장
+↓
+나중에 layerwise_probe.py에서 난이도 분류 실험
+"""
+
+
 # 경로를 스크립트 파일 기준으로 고정 → 어느 cwd에서 실행해도 안전
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))          # .../phase02_layerwise_decodability
 PROJECT_ROOT = os.path.dirname(BASE_DIR)                       # .../project_IR_difficulty_aware_inference

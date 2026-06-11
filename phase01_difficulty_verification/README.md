@@ -117,7 +117,7 @@ phase01_difficulty_verification/
 - 방법 : hidden representation을 입력으로 하고 Easy/Hard label을 정답으로 하여 Logistic Regression 분류기를 학습함.
 - 왜 Linear Probe인가? :
     - 복잡한 모델을 사용하면 분류 성능이 좋아져도 hidden representation 자체에 정보가 있는지, 분류기가 새롭게 복잡한 패턴을 학습한 것인지 구분하기 어려움.
-    - 따라서 가장 단순한 선형 분류기를 사용하여, Easy/Hard 정보가 hidden representation에서 선형적으로 디코딩 가능한지 확인함.
+    - 따라서 가장 단순한 선형 분류기를 사용하여, Easy/Hard 정보가 hidden representation 안에서 선형적으로 디코딩 가능한지 확인함.
 - 평가 지표 :
     - Accuracy : 전체 문제 중 얼마나 맞췄는지
     - Macro-F1 : 클래스 불균형 보완 지표

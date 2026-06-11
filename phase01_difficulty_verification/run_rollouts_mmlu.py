@@ -26,8 +26,8 @@ MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
 NUM_SAMPLES = 500
 NUM_ROLLOUTS = 3
 
-DATASET_PATH = os.path.join(BASE_DIR, "data", "mmlu_pro_test.jsonl")
-OUTPUT_PATH = os.path.join(BASE_DIR, "mmlu_pro_rollouts.jsonl")
+DATASET_PATH = os.path.join(BASE_DIR, "data", "mmlu_pro_test.jsonl")  # 입력: 어느 cwd에서도 안전하게 절대경로
+OUTPUT_PATH = "mmlu_pro_rollouts.jsonl"  # 출력: cwd(run_all_mmlu.sh의 output_mmlu/)에 저장
 
 LETTERS = string.ascii_uppercase
 
@@ -39,14 +39,15 @@ def build_prompt(question: str, options: list[str]) -> str:
     )
 
     return (
-        "Answer the following multiple choice question.\n"
-        "Choose the single best option.\n"
-        "Give only the letter of the correct option after 'Final Answer:'.\n\n"
-        f"Question: {question}\n\n"
-        f"Options:\n{option_lines}\n\n"
-        "Final Answer:"
-    )
-
+    "Answer the following multiple choice question.\n"
+    "Solve it carefully, then give the final answer as a single letter.\n\n"
+    f"Question: {question}\n\n"
+    f"Options:\n{option_lines}\n\n"
+    "Your response must end with exactly this format:\n"
+    "Final Answer: X\n"
+    "where X is one of the option letters.\n\n"
+    "Now solve the problem.\n"
+)
 
 def get_gold_letter(item: dict) -> str:
     """answer_index를 기준으로 gold letter를 반환한다."""
@@ -131,7 +132,7 @@ def main():
                 with torch.no_grad():
                     output_ids = model.generate(
                         input_ids,
-                        max_new_tokens=16,
+                        max_new_tokens=256,
                         do_sample=True,
                         temperature=0.7,
                         top_p=0.95,

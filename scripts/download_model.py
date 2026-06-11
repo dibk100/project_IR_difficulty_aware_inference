@@ -1,7 +1,8 @@
 from huggingface_hub import snapshot_download
 
 models = [
-    "Qwen/Qwen2.5-7B-Instruct"
+    "Qwen/Qwen2.5-14B-Instruct"
+    # "Qwen/Qwen2.5-7B-Instruct"
     # "codellama/CodeLlama-7b-Instruct-hf",
     # "microsoft/Phi-3.5-mini-instruct"
     # "Qwen/Qwen2.5-Coder-14B-Instruct",

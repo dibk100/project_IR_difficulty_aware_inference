@@ -1,15 +1,15 @@
-# phase02 : Difficulty Signal Discovery
+# phase03 : Difficulty Signal Discovery
 *정의) signal : Difficulty를 반영하는 특정 측정값
 
 질문 : 어떤 Signal이 Difficulty 정보를 가장 잘 설명하는가?
 
 ### Difficulty Signal 후보
-- Entropy
-- Margin
-- Norm
+- Entropy, Attention Entropy
+- Logit Margin
+- Hidden State Norm
 - Effective Rank
 - Intrinsic Dimension
-
+- Layer-wise Variance
 
 ### 실험 설계 및 가정
 - Branch A. Effective Rank
@@ -78,3 +78,24 @@ effective rank, intrinsic demension, representation complexity
 2. Difficulty 라벨 고정 (Phase01 방식)
 3. Layer 고정 (예: 마지막 레이어)
 4. 마지막 토큰 기준으로 먼저 측정
+
+
+```
+입력:
+Phase02에서 저장한 layerwise hidden states
+
+후보 신호:
+1. Hidden State Norm
+2. Representation Variance
+3. Effective Rank
+4. Logit Entropy
+5. Logit Margin
+
+평가:
+각 layer, 각 signal에 대해
+Easy vs Hard 구분력 측정
+
+출력:
+signal, layer, aggregation, ROC-AUC
+
+```
