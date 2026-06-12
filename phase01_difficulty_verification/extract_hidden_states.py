@@ -4,7 +4,8 @@ import numpy as np
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
+# Hub 조회/네트워크 없이 로컬 캐시 스냅샷에서 직접 로드 (Qwen2.5-14B 메타데이터 불완전 우회)
+MODEL_NAME = "/mnt/hdd/hf_cache/hub/models--Qwen--Qwen2.5-14B-Instruct/snapshots/cf98f3b3bbb457ad9e2bb7baf9a0125b6b88caa8"
 INPUT_PATH = "gsm8k_main_rollouts.jsonl"
 OUTPUT_PATH = "gsm8k_main_hidden_states.npz"
 

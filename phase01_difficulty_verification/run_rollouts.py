@@ -16,7 +16,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ===== 실험 설정 =====
-MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
+# Hub 조회/네트워크 없이 로컬 캐시 스냅샷에서 직접 로드 (Qwen2.5-14B 메타데이터 불완전 우회)
+MODEL_NAME = "/mnt/hdd/hf_cache/hub/models--Qwen--Qwen2.5-14B-Instruct/snapshots/cf98f3b3bbb457ad9e2bb7baf9a0125b6b88caa8"
 NUM_SAMPLES = 500
 NUM_ROLLOUTS = 3
 DATASET_PATH = os.path.join(BASE_DIR, "data", "gsm8k_main_test.jsonl")

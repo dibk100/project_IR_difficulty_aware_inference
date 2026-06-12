@@ -91,6 +91,45 @@ phase01_difficulty_verification/
 └── linear_probe.py
 ```
 
+<!--
+📁 파일 구조
+```
+output_llama_500/
+├── gsm8k_main_rollouts.jsonl       (1.5MB) ← Step1: 라벨 생성 결과 (원본)
+├── gsm8k_main_hidden_states.npz    (17.6MB) ← Step2: hidden state
+├── pca_easy_hard_last_token.png        ┐
+├── pca_easy_hard_mean_pooling.png      │ Step3: 시각화
+├── tsne_easy_hard_last_token.png       │ (PCA/t-SNE × last/mean)
+├── tsne_easy_hard_mean_pooling.png     ┘
+├── run_all.log + 01~04 단계별 로그   (Step4 linear_probe 포함)
+```
+
+🧬 gsm8k_main_rollouts.jsonl — 라벨 생성 레코드 (500줄)
+키	내용
+id, question, gold, parsed_gold	문제·정답
+correct_count	3회 중 정답 횟수
+label	easy(3/3) / hard
+rollouts	3개 생성 결과 (각: rollout_id, output, parsed_pred, parsed_gold, correct)
+
+🧬 gsm8k_main_hidden_states.npz — 임베딩 (5개 배열)
+키	shape	내용
+embeddings_last	(500, 4096)	마지막 레이어, 마지막 토큰 representation
+embeddings_mean	(500, 4096)	마지막 레이어, mean-pooling
+labels	(500,)	easy/hard
+ids	(500,)	문제 id
+questions	(500,)	질문 텍스트
+라벨 분포: easy 373 / hard 127
+
+phase01 vs phase02 차이
+phase01 (output_llama_500)	phase02 (output_llama_500)
+레이어 범위	마지막 레이어만 (embeddings_last/mean)	32개 전 레이어 (layer01~32_last/mean)
+npz 크기	17.6MB	525MB
+rollouts 포함	✅ (라벨 생성 원본)	❌ (phase01 것을 입력으로 사용)
+산출물	PCA/t-SNE 그림 + linear probe	레이어별 AUC 곡선
+
+-->
+
+
 > run_rollouts.py   
 - 목적 : 문제를 실제로 풀게 해서 easy/hard 라벨을 만들게 함.   
 - 방법 : 실험 세팅에 Difficulty Label에 내용 작성해둠.
