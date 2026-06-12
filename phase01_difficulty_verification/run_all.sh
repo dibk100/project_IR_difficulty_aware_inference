@@ -15,12 +15,6 @@
 
 set -euo pipefail
 
-# 오프라인 모드: 모델이 이미 HF 캐시에 있으면 Hub 접속(버전 확인) 없이 캐시에서 바로 로드.
-# 네트워크가 느리거나 막혔을 때 "Fetching N files" 단계에서 멈추는 문제를 방지한다.
-# (캐시에 없는 모델을 처음 받을 때는 이 두 줄을 잠깐 주석 처리하고 실행)
-# export HF_HUB_OFFLINE=1      # 모델 다운로드가 끝나면 다시 주석 해제할 것
-# export TRANSFORMERS_OFFLINE=1  # (Qwen2.5-14B 다운로드 완료 전까지 임시 비활성화)
-
 # 스크립트 위치(=phase01 루트)로 기준을 고정
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
