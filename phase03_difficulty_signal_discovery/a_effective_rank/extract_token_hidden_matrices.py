@@ -33,9 +33,9 @@ Each sample file contains:
 
 실행 예시
 python a_effective_rank/extract_token_hidden_matrices.py \
-  --model_name meta-llama/Llama-3.1-8B-Instruct \
-  --input_path ../phase01_difficulty_verification/output_llama_500/gsm8k_main_rollouts.jsonl \
-  --output_dir output_llama_500/effective_rank/token_hidden_matrices
+  --model_name microsoft/Phi-3.5-mini-instruct \
+  --input_path ../phase01_difficulty_verification/output_phi_1000/gsm8k_main_rollouts.jsonl \
+  --output_dir output_phi_1000/effective_rank/token_hidden_matrices
   
 python a_effective_rank/extract_token_hidden_matrices.py \
   --model_name microsoft/Phi-3.5-mini-instruct \

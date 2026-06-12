@@ -14,8 +14,10 @@ python length_matched_probe.py
 
 MODEL_NAME = "microsoft/Phi-3.5-mini-instruct"
 
-ROLLOUT_PATH = "output_phi_500/gsm8k_main_rollouts.jsonl"
-HIDDEN_PATH = "output_phi_500/gsm8k_main_hidden_states.npz"
+# run_all.sh가 cwd=output/ 에서 실행하므로 같은 run의 step1/step2 산출물을 파일명으로 참조.
+# (단독 실행 시엔 해당 output 폴더 안에서 돌리거나 경로를 직접 지정)
+ROLLOUT_PATH = "gsm8k_main_rollouts.jsonl"
+HIDDEN_PATH = "gsm8k_main_hidden_states.npz"
 
 RANDOM_STATE = 42
 N_SPLITS = 5

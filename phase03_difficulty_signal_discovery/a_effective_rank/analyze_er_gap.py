@@ -23,8 +23,8 @@ For each layer and each ER type:
     
 예시
 python a_effective_rank/analyze_er_gap.py \
-  --input_csv output_llama_500/effective_rank/sample_layer_effective_rank.csv \
-  --output_csv output_llama_500/effective_rank/layerwise_er_gap.csv \
+  --input_csv output_phi_1000/effective_rank/sample_layer_effective_rank.csv \
+  --output_csv output_phi_1000/effective_rank/layerwise_er_gap.csv \
   --overwrite
 """
 

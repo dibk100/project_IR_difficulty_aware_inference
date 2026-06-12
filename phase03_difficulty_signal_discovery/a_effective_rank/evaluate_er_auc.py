@@ -24,8 +24,8 @@ Note:
     positive class: hard
     
 python a_effective_rank/evaluate_er_auc.py \
-  --input_csv output_llama_500/effective_rank/sample_layer_effective_rank.csv \
-  --output_dir output_llama_500/effective_rank/er_signal_auc \
+  --input_csv output_phi_1000/effective_rank/sample_layer_effective_rank.csv \
+  --output_dir output_phi_1000/effective_rank/er_signal_auc \
   --overwrite
 """
 

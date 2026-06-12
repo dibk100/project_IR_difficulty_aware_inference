@@ -107,11 +107,135 @@ Signal 유효성 검증
 
 - 질문 : Transformer의 각 레이어 표현 공간(hidden representation)에서 Effective Rank가 입력 난이도(Easy/Hard)를 구분하는 유효한 Difficulty Signal이 될 수 있는가?
 
-- 실험 세팅 :
-    - 데이터셋 : GSM8K - 500 samples
-        - Easy: 373
-        - Hard: 127
+- 결과 : 조짐
 
+
+### Phase03-C. Representation Norm
+- 질문 : 각 레이어 hidden representation의 norm이 Easy/Hard를 구분하는 신호가 될 수 있는가?
+
+- 결과 :
+
+    - Easy/Hard 간 norm 차이는 존재
+    - 중간 레이어에서 Easy > Hard 경향 관찰
+    - 최고 AUC ≈ 0.586
+
+- 결론 :
+
+    - Representation Norm은 difficulty signal로서 일관된 경향은 보이나, 분류력은 부족하다.
+    - Effective Rank보다 성능이 낮으며,controller 신호로 사용하기에는 근거가 약하다.
+
+<!--
+1. compute_norm_signal.py
+2. analyze_norm_gap.py
+3. evaluate_norm_auc.py
+4. length_control_analysis.py
+5. compare_probe_auc.py
+6. plot_norm_results.py
+```
+phase03_signal_discovery/
+└── c_representation_norm/
+    ├── compute_norm_signal.py
+    ├── analyze_norm_gap.py
+    ├── evaluate_norm_auc.py
+    ├── length_control_analysis.py
+    ├── compare_probe_auc.py
+    └── plot_norm_results.p
+
+output_phi_1000/
+└── representation_norm/
+    ├── sample_layer_norm.csv
+    ├── layerwise_norm_gap.csv
+    ├── norm_signal_auc.csv
+    ├── length_control_norm.csv
+    ├── compare_probe/
+    └── figures/
+```
+last_norm        = ||last-token hidden||
+mean_norm        = ||mean-pooled hidden||
+token_norm_mean  = mean_t ||h_t||
+
+
+Hidden norm
+
+∣∣h
+l
+	
+
+∣∣
+
+Layer-to-layer distance
+
+∣∣h
+l
+	
+
+−h
+l−1
+	
+
+∣∣
+
+Cosine similarity
+
+cos(h
+l
+	
+
+,h
+l−1
+	
+
+)
+Entropy
+Logit margin
+-->
+
+### Phase03-D: Intrinsic Dimension 기반 Representation Geometry 분석
+
+phase03_signal_discovery/
+└── d_intrinsic_dimension/
+    ├── compute_layerwise_id.py
+    ├── analyze_id_profile.py
+    ├── compare_probe_auc.py
+    ├── evaluate_id_auc.py
+    ├── length_control_analysis.py
+    ├── plot_id_results.py
+    └── README.md
+
+output_phi_1000/
+└── intrinsic_dimension/
+    ├── layerwise_id_profile.csv
+    ├── sample_layer_id.csv
+    ├── layerwise_id_gap.csv
+    ├── id_signal_auc.csv
+    ├── length_control_id.csv
+    ├── compare_probe/
+    └── figures/
+
+1. compute_layerwise_id.py
+   - layer별 전체/easy/hard ID 계산
+
+2. analyze_id_profile.py
+   - ID profile의 peak/minimum/transition 확인
+
+3. compare_probe_auc.py
+   - Phase02 layerwise_probe_results.csv와 ID profile 비교
+
+3-2. compute_samplewise_local_id.py
+
+4. evaluate_id_auc.py
+   - ID 자체가 signal로 쓰일 수 있는지 확인
+   - 단, group-wise ID는 sample별 AUC가 아니라 layer-level 분석 중심
+
+5. plot_id_results.py
+   - ID profile, Probe AUC overlap plot
+
+
+
+1. compute_samplewise_local_id.py
+2. evaluate_id_auc.py
+3. length/metadata sanity check
+4. plot_id_results.py
 <!--
 ### 실험 설계 및 가정
 - Branch A. Effective Rank

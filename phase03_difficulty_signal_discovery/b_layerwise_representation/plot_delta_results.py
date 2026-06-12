@@ -22,10 +22,10 @@ For each aggregation and metric:
     - delta_l2 / delta_l2_normed / delta_cosine
     
 python b_layerwise_representation/plot_delta_results.py \
-  --delta_csv output_llama_500/layerwise_representation_change/sample_layer_delta.csv \
-  --gap_csv output_llama_500/layerwise_representation_change/layerwise_delta_gap.csv \
-  --auc_csv output_llama_500/layerwise_representation_change/delta_signal_auc.csv \
-  --output_dir output_llama_500/layerwise_representation_change/figures
+  --delta_csv output_phi_1000/layerwise_representation_change/sample_layer_delta.csv \
+  --gap_csv output_phi_1000/layerwise_representation_change/layerwise_delta_gap.csv \
+  --auc_csv output_phi_1000/layerwise_representation_change/delta_signal_auc.csv \
+  --output_dir output_phi_1000/layerwise_representation_change/figures
   
 delta_easy_hard_mean_delta_cosine.png
 delta_gap_mean_delta_cosine.png

@@ -36,8 +36,8 @@ Columns:
     
 실행 예시
 python a_effective_rank/compute_effective_rank.py \
-  --input_dir output_llama_500/effective_rank/token_hidden_matrices \
-  --output_csv output_llama_500/effective_rank/sample_layer_effective_rank.csv \
+  --input_dir output_phi_1000/effective_rank/token_hidden_matrices \
+  --output_csv output_phi_1000/effective_rank/sample_layer_effective_rank.csv \
   --overwrite
   
 python a_effective_rank/compute_effective_rank.py \

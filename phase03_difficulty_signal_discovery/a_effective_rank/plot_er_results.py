@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 """
 python a_effective_rank/plot_er_results.py \
-  --input_csv output_llama_500/effective_rank/layerwise_er_gap.csv \
-  --output_dir output_llama_500/effective_rank/figures
+  --input_csv output_phi_1000/effective_rank/layerwise_er_gap.csv \
+  --output_dir output_phi_1000/effective_rank/figures
 
 """
 def parse_args():

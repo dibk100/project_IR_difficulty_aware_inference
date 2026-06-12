@@ -35,8 +35,8 @@ Columns:
     delta_cosine
     
 python b_layerwise_representation/compute_layerwise_delta.py \
-  --input_npz ../phase02_layerwise_decodability/output_llama_500/gsm8k_layerwise_hidden_states.npz \
-  --output_csv output_llama_500/layerwise_representation_change/sample_layer_delta.csv \
+  --input_npz ../phase02_layerwise_decodability/output_phi_1000/gsm8k_layerwise_hidden_states.npz \
+  --output_csv output_phi_1000/layerwise_representation_change/sample_layer_delta.csv \
   --overwrite
   
 """

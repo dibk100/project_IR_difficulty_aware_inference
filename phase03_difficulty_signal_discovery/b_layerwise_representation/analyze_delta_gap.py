@@ -22,8 +22,8 @@ For each aggregation, layer, and delta metric:
     - Mann-Whitney U p-value
     
 python b_layerwise_representation/analyze_delta_gap.py \
-  --input_csv output_llama_500/layerwise_representation_change/sample_layer_delta.csv \
-  --output_csv output_llama_500/layerwise_representation_change/layerwise_delta_gap.csv \
+  --input_csv output_phi_1000/layerwise_representation_change/sample_layer_delta.csv \
+  --output_csv output_phi_1000/layerwise_representation_change/layerwise_delta_gap.csv \
   --overwrite
 """
 

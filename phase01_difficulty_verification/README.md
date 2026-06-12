@@ -288,9 +288,11 @@ ROC-AUC = 모든 threshold에서의 구분 능력을 하나의 숫자로 요약�
 - (방법) inspect_labels_llama_500.ipynb, length_probe.py를 통해 실제로 의존적임을 확인함.
 - (질문) Difficulty Information은 1) 단순 입력 길이 때문일까, 2) hidden representation은 길이를 넘는 정보를 담고 있는가
 - (시도)
-    1. Length-matched subset (Failed)
+    1. Length-matched subset (RE_A)
+        - Llama (Failed)
+        - Phi (Finding)
     2. Residualization (PASS) : Hidden representation에서 length 정보를 제거한 뒤 probe
-    3. ohter dataset (TRY)
+    3. ohter dataset
 
 #### phase01-RE_A : Length-matched Difficulty Verification
 > length_matched_probe.py
@@ -310,6 +312,9 @@ ROC-AUC = 모든 threshold에서의 구분 능력을 하나의 숫자로 요약�
     - Last-token Hidden Representation
     - Mean-pooled Hidden Representation
 - (결과)
+    - Original: Easy 373 / Hard 127
+    - Matched: Easy 124 / Hard 124
+    - Matching tolerance: ±5 tokens
 
     | Feature             | ROC-AUC |
     | ------------------- | ------: |
@@ -327,7 +332,7 @@ Hidden Representation 내부에 Difficulty 관련 정보가 일부 존재할 가
 **다른 데이터셋**에서 동일 현상이 나타나는지 추가 검증 필요.
 
 <details>
-<summary>상세정보 : 실험 결과 수치</summary>
+<summary>상세정보 llama: 실험 결과 수치</summary>
 
 ```
 [Original length stats]
@@ -361,6 +366,78 @@ Hard: 124
 accuracy: 0.5164 ± 0.0547
 roc_auc: 0.5338 ± 0.0431
 macro_f1: 0.5113 ± 0.0520
+```
+
+</details>
+
+#### phase01-RE_A-other : Length-matched Difficulty Verification
+- (배경) 실험 데이터셋을 변경하기 전에 작은 모델로 실험해봄.(phi-3.8b)
+- (결과)
+    - Original: Easy 357 / Hard 143
+    - Matched: Easy 140 / Hard 140
+    - Matching tolerance: ±5 tokens
+
+    | Feature            | ROC-AUC |
+    | ------------------ | ------: |
+    | Token Length Only  |  0.4735 |
+    | Last-token Hidden  |  0.6332 |
+    | Mean-pooled Hidden |  0.5814 |
+
+    - Phi-3.5-mini-instruct에서는 Length 통제 후에도 ROC-AUC 0.63 수준의 residual signal이 관찰됨.
+
+- (가정) 현재 Length-matched subset의 크기가 작다. llama는 284개, phi는 280개로 실험됨. 더 큰 sample size로 재실험해 볼 필요가 있다.
+- (Next) 
+    1. GSM8K sample size 확장(1000개)
+    2. Phi-3.5-mini-instruct부터 재검증
+        - matched subset 크기를 늘린 뒤 ROC-AUC 안정성 확인
+        - 이후 RE_B에서 CommonsenseQA / StrategyQA 등 다른 데이터셋으로 확장
+
+<details>
+<summary>상세정보 phi: 실험 결과 수치</summary>
+
+```
+Original dataset
+Total: 500
+Easy: 357
+Hard: 143
+
+[Original length stats]
+easy {'n': 357, 'mean': 91.68, 'median': 88.0, 'std': 23.1, 'min': 52, 'max': 174}
+hard {'n': 143, 'mean': 102.24, 'median': 99.0, 'std': 26.39, 'min': 54, 'max': 202}
+
+Matched dataset
+Tolerance: 5
+Matched total: 280
+Matched easy: 140
+Matched hard: 140
+
+[Matched length stats]
+easy {'n': 140, 'mean': 100.64, 'median': 98.5, 'std': 24.11, 'min': 54, 'max': 172}
+hard {'n': 140, 'mean': 100.67, 'median': 98.5, 'std': 24.2, 'min': 54, 'max': 169}
+
+[length_matched_token_len_only]
+Feature shape: (280, 1)
+Easy: 140
+Hard: 140
+accuracy: 0.4679 ± 0.0569
+roc_auc: 0.4735 ± 0.0351
+macro_f1: 0.4650 ± 0.0545
+
+[length_matched_hidden_last_token]
+Feature shape: (280, 3072)
+Easy: 140
+Hard: 140
+accuracy: 0.6107 ± 0.0558
+roc_auc: 0.6332 ± 0.0734
+macro_f1: 0.6079 ± 0.0572
+
+[length_matched_hidden_mean_pooling]
+Feature shape: (280, 3072)
+Easy: 140
+Hard: 140
+accuracy: 0.5464 ± 0.0267
+roc_auc: 0.5814 ± 0.0395
+macro_f1: 0.5446 ± 0.0273
 ```
 
 </details>

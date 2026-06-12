@@ -24,9 +24,9 @@ Positive class:
     hard
     
 python b_layerwise_representation/evaluate_delta_auc.py \
-  --input_csv output_llama_500/layerwise_representation_change/sample_layer_delta.csv \
-  --output_csv output_llama_500/layerwise_representation_change/delta_signal_auc.csv \
-  --figure_dir output_llama_500/layerwise_representation_change/figures \
+  --input_csv output_phi_1000/layerwise_representation_change/sample_layer_delta.csv \
+  --output_csv output_phi_1000/layerwise_representation_change/delta_signal_auc.csv \
+  --figure_dir output_phi_1000/layerwise_representation_change/figures \
   --overwrite
 """
 

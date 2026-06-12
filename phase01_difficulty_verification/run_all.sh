@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # run_all.sh — phase01 파이프라인 일괄 실행
 #
-#   1) run_rollouts.py         : Easy/Hard 라벨 생성   -> gsm8k_socratic_rollouts.jsonl
-#   2) extract_hidden_states.py: hidden state 추출      -> gsm8k_socratic_hidden_states.npz
+#   1) run_rollouts.py         : Easy/Hard 라벨 생성   -> gsm8k_main_rollouts.jsonl
+#   2) extract_hidden_states.py: hidden state 추출      -> gsm8k_main_hidden_states.npz
 #   3) visualize_embeddings.py : PCA / t-SNE 시각화      -> pca_*.png, tsne_*.png
 #   4) linear_probe.py         : linear probe 정량 평가  -> (지표 출력)
+#   5) length_matched_probe.py : 길이 매칭 probe (길이 교란 통제) -> (지표 출력)
 #
 # 모든 산출물(jsonl/npz/png)과 각 단계의 터미널 로그는 output/ 폴더에 저장된다.
 # 어느 단계든 실패하면 즉시 중단된다.
@@ -59,6 +60,7 @@ start_ts=$(date +%s)
     run_step 2 extract_hidden_states.py
     run_step 3 visualize_embeddings.py
     run_step 4 linear_probe.py
+    run_step 5 length_matched_probe.py
 
     elapsed=$(( $(date +%s) - start_ts ))
     echo ""

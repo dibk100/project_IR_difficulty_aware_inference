@@ -17,15 +17,15 @@ Phase03-A:
     Layer-wise Effective Rank Gap
     
 python a_effective_rank/compare_probe_auc.py \
-  --probe_csv ../phase02_layerwise_decodability/output_llama_500/layerwise_probe_results.csv \
-  --er_csv output_llama_500/effective_rank/layerwise_er_gap.csv \
-  --output_dir output_llama_500/effective_rank/compare_probe \
+  --probe_csv ../phase02_layerwise_decodability/output_phi_1000/layerwise_probe_results.csv \
+  --er_csv output_phi_1000/effective_rank/layerwise_er_gap.csv \
+  --output_dir output_phi_1000/effective_rank/compare_probe \
   --aggregation last
   
 python a_effective_rank/compare_probe_auc.py \
-  --probe_csv ../phase02_layerwise_decodability/output_llama_500/layerwise_probe_results.csv \
-  --er_csv output_llama_500/effective_rank/layerwise_er_gap.csv \
-  --output_dir output_llama_500/effective_rank/compare_probe \
+  --probe_csv ../phase02_layerwise_decodability/output_phi_1000/layerwise_probe_results.csv \
+  --er_csv output_phi_1000/effective_rank/layerwise_er_gap.csv \
+  --output_dir output_phi_1000/effective_rank/compare_probe \
   --aggregation mean
 """
 

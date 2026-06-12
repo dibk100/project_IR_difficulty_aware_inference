@@ -26,8 +26,8 @@ Analyses:
     5. Layer-wise residual ER AUC
     
 python a_effective_rank/length_control_analysis.py \
-  --input_csv output_llama_500/effective_rank/sample_layer_effective_rank.csv \
-  --output_dir output_llama_500/effective_rank/length_control \
+  --input_csv output_phi_1000/effective_rank/sample_layer_effective_rank.csv \
+  --output_dir output_phi_1000/effective_rank/length_control \
   --er_type er_centered \
   --overwrite
 """

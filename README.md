@@ -78,7 +78,10 @@ Entropy
 Margin   
 Representation Complexity   
 
-### Phase 04 : Difficulty Signal Discovery
+### Phase 04: Difficulty Subspace Discovery
+
+
+### Phase 05 : Difficulty Signal Discovery
 질문 : 발견된 Difficulty Signal을 이용하여 레이어 사용량을 동적으로 조절할 수 있는가?
 
 

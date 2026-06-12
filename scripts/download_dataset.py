@@ -32,7 +32,13 @@ SOURCES = {
         "config": None,
         "split": "test",
         "out": "mmlu_pro_test.jsonl",
-    }
+    },
+    "math500": {
+        "path": "HuggingFaceH4/MATH-500",
+        "config": None,
+        "split": "test",
+        "out": "math500_test.jsonl",
+    },
 }
 
 
