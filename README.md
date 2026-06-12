@@ -9,7 +9,11 @@
 * LLM Inference Optimization
 
 ## Main Research Questions
-(가설) 쉬운 질문, 입력은 적은 레이어만으로 충분히 표현되고, 어려운 입력에 대해 더 깊은 레이어 및 계산이 필요하다.
+(model-perceived difficulty)
+
+- 질문 : 입력 질문을 읽은 직후, 토큰 생성 전에 모델 내부 상태만으로 추론 난이도 또는 계산 필요도를 감지할 수 있는가?
+- RQ1. 입력만 처리한 초기 hidden representation은 모델이 이후 응답 생성에서 겪을 성공/실패 가능성을 예고하는가?
+
 
 ## Overview 📝
 기존 Adaptive Inference 연구들은 주로 Entropy, Confidence 등의 출력 기반 신호를 사용하여 계산량을 조절한다.

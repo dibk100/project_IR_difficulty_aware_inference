@@ -1,12 +1,19 @@
 # phase01 : difficulty_verification
 
-본 단계의 목표는 LLM의 hidden representation 안에 difficulty 정보가 존재하는지 검증하는 것이다.
-
-최근 연구 The LLM Already Knows는 입력 질문의 hidden representation만으로도 문제 난이도와 관련된 정보를 추정할 수 있음을 보여주었다.
-
-본 실험에서는 해당 아이디어를 텍스트 기반 LLM 환경에서 검증하고, Easy/Hard 문제들이 hidden representation 공간에서 실제로 분리되는지 분석한다.
-
 - 참고 논문 : The LLM Already Knows: Estimating LLM-Perceived Question Difficulty via Hidden Representations(EMNLP 2025)  
+
+**Main Question**
+
+> 입력 질문을 처리한 직후의 Hidden Representation은 토큰 생성 전에 모델의 문제 해결 난이도(model-perceived difficulty)를 예고할 수 있는가?
+
+**Control Question**
+
+> 해당 예고 신호는 단순히 입력 길이(token length, word length, character length)에 의해 설명되는가?
+
+**Goal**
+
+본 단계의 목표는 모델이 응답을 생성하기 전에 형성한 Hidden Representation 안에, 이후 생성 결과의 성공/실패 가능성과 관련된 정보가 존재하는지 검증하는 것이다. Easy/Hard 라벨 분류는 최종 목적이 아니라, model-perceived difficulty를 관찰하기 위한 operational proxy로 사용한다.
+
 
 <!--
 실행 순서
@@ -17,22 +24,24 @@ bash run_all.sh
 NUM_SAMPLES = 100으로 돌리고, 잘 되면 300~500으로 늘리기
 -->
 
+
 ### 실험 세팅
 - model : 
     - (base) meta-llama/Llama-3.1-8B-Instruct
     - (additional) Qwen/Qwen2.5-7B-Instruct
     - (additional) microsoft/Phi-3.5-mini-instruct
+    - (additional) Qwen/Qwen2.5-14B-Instruct
     - (optional) mistralai/Mistral-7B-Instruct-v0.3
 - dataset :
     - (base) GSM8K (main, test) → 수학 추론 난이도
-    - (optional) MATH-500 
-    - (additional) MMLU-Pro → 일반/전문 지식 + 추론 난이도
+    - (optional) MMLU-Pro → 일반/전문 지식 + 추론 난이도
 - Difficulty Label :   
+*해당 정의는 The LLM Already Knows 논문의 difficulty labeling 방식을 참고   
 각 문제에 대해 3회의 독립적인 generation을 수행한다.
     - Easy : 3/3 정답
     - Hard : 그 외 모든 경우  
 
-    *해당 정의는 The LLM Already Knows 논문의 difficulty labeling 방식을 참고
+    
 
 ### Representation
 - Last Layer Hidden Representation
@@ -81,14 +90,17 @@ score = Easy/Hard를 구분하기 위한 점수
 ## 📁 Folder Structure
 ```
 phase01_difficulty_verification/
-├── README.md
-├── data
-├── output_llama_500
-├── output_qwen_500
+├── data/
+├── dataEDA/
+├── output_llama_500/
+├── output_qwen_500/
+├── output_phi_500/
 ├── run_rollouts.py
 ├── extract_hidden_states.py 
 ├── visualize_embeddings.py
-└── linear_probe.py
+├── linear_probe.py
+├── length_probe.py
+└── README.md
 ```
 
 <!--
@@ -189,6 +201,14 @@ ROC-AUC = 모든 threshold에서의 구분 능력을 하나의 숫자로 요약�
 
 -->
 
+> length_probe.py
+- 목적 : Easy/Hard 라벨이 hidden representation이 아니라 단순히 입력 길이에 의해 구분되는지 확인하기 위한 sanity check
+- 방법 : char_len, word_len, token_len만 사용하여 Logistic Regression으로 Easy/Hard를 예측
+- 비교 : Length-only ROC-AUC와 Hidden Representation 기반 Linear Probe ROC-AUC를 비교
+- 해석 :
+    - Length-only 성능이 hidden representation과 비슷하면, difficulty 정보가 단순 길이 효과일 가능성이 있음
+    - Length-only 성능이 낮고 hidden representation 성능이 더 높으면, hidden representation이 길이 이상의 difficulty 정보를 포함한다고 해석 가능
+
 
 ## 📝 실험 기록
 ### LLAMA_gsm8k
@@ -202,8 +222,8 @@ ROC-AUC = 모든 threshold에서의 구분 능력을 하나의 숫자로 요약�
     1. (Done)representation 위치 문제(Done)
     2. (Success)시각화 방법 문제
     3. (PASS)데이터셋의 문제(gsm8k)
-    4. (PASS)모델의 문제(llama가 아닌 다른 모델 실험)
-    5. (PASS)모델 크기 문제(7b가 아닌 더 큰/작은 모델로 실험)
+    4. (Done)모델의 문제(llama가 아닌 다른 모델 실험)
+    5. (Done)모델 크기 문제(7b가 아닌 더 큰/작은 모델로 실험)
 
 ### Solution01 : Representation
 - model : Qwen/Qwen2.5-7B-Instruct
@@ -261,4 +281,92 @@ ROC-AUC = 모든 threshold에서의 구분 능력을 하나의 숫자로 요약�
 - (원인) run_rollouts.py에서 정답을 추출하는 re파싱(정규화, 문자열 비교) 때문에 조금이라도 틀리면 false로 함.
 - (해결) 해결함. 하지만 pca, t-sen 시각화 변화는 없음. liner probing 수치는 높아짐.
 
+---
 
+### ISSUE : 
+- (배경) phase03실험 중, Hard/Easy 라벨의 구분이 입력질문의 길이 및 토큰수에 의존적일 수 있다는 것을 발견함.
+- (방법) inspect_labels_llama_500.ipynb, length_probe.py를 통해 실제로 의존적임을 확인함.
+- (질문) Difficulty Information은 1) 단순 입력 길이 때문일까, 2) hidden representation은 길이를 넘는 정보를 담고 있는가
+- (시도)
+    1. Length-matched subset (Failed)
+    2. Residualization (PASS) : Hidden representation에서 length 정보를 제거한 뒤 probe
+    3. ohter dataset (TRY)
+
+#### phase01-RE_A : Length-matched Difficulty Verification
+> length_matched_probe.py
+
+- (목적) Easy/Hard 분류 성능이 Hidden Representation 자체에서 오는 것인지, 아니면 입력 길이(token length) 효과 때문인지 확인.
+- (방법) Easy와 Hard를 비슷한 token length 구간에서 매칭하고 비교
+    - Hard 문제 1개 token_len=70, Easy 문제 중 token_len 65~75에서 1개 샘플링(Tolerance = ±5 tokens)
+- (원하는 결과) Length-matched 상태에서 Hidden ROC-AUC > 0.60이어야 길이 이상의 정보를 담는다고 할 수 있음
+- (세팅)
+    - Llama-3.1-8B-Instruct
+    - GSM8K test 500 samples
+    - Matched subset 구성 : 평균 토큰 길이(119)
+        - Easy 124 개
+        - Hard 124 개
+- (비교 실험)
+    - Token Length Only
+    - Last-token Hidden Representation
+    - Mean-pooled Hidden Representation
+- (결과)
+
+    | Feature             | ROC-AUC |
+    | ------------------- | ------: |
+    | Token Length Only   |  0.4117 |
+    | Last-token Hidden   |  0.5797 |
+    | Mean Pooling Hidden |  0.5338 |
+
+    - 기존 GSM8K 실험에서는 입력 길이가 Easy/Hard와 강하게 연관되어 있었음.
+    - Length matching 이후 Token Length 기반 분류 성능은 무너짐.
+    - Hidden Representation의 분류 성능도 크게 감소함. 다만 Last-token Hidden Representation은 ROC-AUC 0.58 수준으로 랜덤(0.5)보다 약간 높은 성능을 유지함.
+    - 따라서 기존 Difficulty Signal의 상당 부분은 입력 길이와 관련되어 있었을 가능성이 높음.
+
+- (결론) 입력 길이는 GSM8K Easy/Hard 라벨과 강하게 연관되어 있었으며, 기존 Phase01 결과의 상당 부분을 설명할 수 있었다.
+Hidden Representation 내부에 Difficulty 관련 정보가 일부 존재할 가능성은 있으나 신호는 약함.
+**다른 데이터셋**에서 동일 현상이 나타나는지 추가 검증 필요.
+
+<details>
+<summary>상세정보 : 실험 결과 수치</summary>
+
+```
+[Original length stats]
+easy {'n': 373, 'mean': 106.42, 'median': 104.0, 'std': 18.99, 'min': 74, 'max': 184}
+hard {'n': 127, 'mean': 120.56, 'median': 117.0, 'std': 22.76, 'min': 76, 'max': 188}
+
+[Matched length stats]
+easy {'n': 124, 'mean': 119.19, 'median': 117.0, 'std': 21.34, 'min': 75, 'max': 184}
+hard {'n': 124, 'mean': 119.31, 'median': 117.0, 'std': 21.55, 'min': 76, 'max': 188}
+
+[length_matched_token_len_only]
+Feature shape: (248, 1)
+Easy: 124
+Hard: 124
+accuracy: 0.4395 ± 0.0426
+roc_auc: 0.4117 ± 0.0461
+macro_f1: 0.4361 ± 0.0441
+
+[length_matched_hidden_last_token]
+Feature shape: (248, 4096)
+Easy: 124
+Hard: 124
+accuracy: 0.5365 ± 0.0628
+roc_auc: 0.5797 ± 0.0962
+macro_f1: 0.5323 ± 0.0642
+
+[length_matched_hidden_mean_pooling]
+Feature shape: (248, 4096)
+Easy: 124
+Hard: 124
+accuracy: 0.5164 ± 0.0547
+roc_auc: 0.5338 ± 0.0431
+macro_f1: 0.5113 ± 0.0520
+```
+
+</details>
+
+### 3. 다른 데이터셋
+
+1. StrategyQA
+2. CommonsenseQA
+3. MMLU bench - text
