@@ -28,10 +28,10 @@ PROJECT_ROOT = os.path.dirname(BASE_DIR)                       # .../project_IR_
 # "meta-llama/Llama-3.1-8B-Instruct"
 # "Qwen/Qwen2.5-7B-Instruct"
 # "microsoft/Phi-3.5-mini-instruct"
-MODEL_NAME = "microsoft/Phi-3.5-mini-instruct"
+MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
 INPUT_PATH = os.path.join(
     PROJECT_ROOT,
-    "phase01_difficulty_verification", "output_phi_1000", "gsm8k_main_rollouts.jsonl",
+    "phase01_difficulty_verification", "output_llama_1000", "gsm8k_main_rollouts.jsonl",
 )
 OUTPUT_PATH = "gsm8k_layerwise_hidden_states.npz"
 

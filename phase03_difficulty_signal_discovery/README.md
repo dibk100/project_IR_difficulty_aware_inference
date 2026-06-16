@@ -2,6 +2,8 @@
 
 질문 : 어떤 Signal이 Difficulty 정보를 가장 잘 설명하는가?
 
+Hidden representation 속 difficulty information을 가장 잘 설명하는 signal은 무엇인가?
+
 주의 : 
 - Hard와 Easy는 각 signal을 평가하기 위한 기준(Ground Truth Label)
 - 라벨 분류기 개발이 아닌 Signal을 발견하는 것이 목표

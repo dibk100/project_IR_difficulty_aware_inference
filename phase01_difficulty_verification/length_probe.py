@@ -9,7 +9,7 @@ from sklearn.model_selection import StratifiedKFold, cross_validate
 
 
 MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
-INPUT_PATH = "./output_llama_500/gsm8k_main_rollouts.jsonl"
+INPUT_PATH = "./output_llama_1000/gsm8k_main_rollouts.jsonl"
 
 RANDOM_STATE = 42
 N_SPLITS = 5

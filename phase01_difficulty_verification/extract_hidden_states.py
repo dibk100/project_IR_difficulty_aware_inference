@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_NAME = "microsoft/Phi-3.5-mini-instruct"
+MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct"
 INPUT_PATH = "gsm8k_main_rollouts.jsonl"
 OUTPUT_PATH = "gsm8k_main_hidden_states.npz"
 

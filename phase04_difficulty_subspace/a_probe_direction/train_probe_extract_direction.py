@@ -9,8 +9,8 @@ from sklearn.preprocessing import StandardScaler
 
 """
 python a_probe_direction/train_probe_extract_direction.py \
-  --input_npz ../phase02_layerwise_decodability/output_phi_1000/gsm8k_layerwise_hidden_states.npz \
-  --output_dir output_phi_1000/probe_direction \
+  --input_npz ../phase02_layerwise_decodability/output_llama_1000/gsm8k_layerwise_hidden_states.npz \
+  --output_dir output_llama_1000/probe_direction \
   --n_splits 5 \
   --overwrite
 

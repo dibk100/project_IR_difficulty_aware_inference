@@ -22,9 +22,9 @@ Output:
         projection_box_<aggregation>_layerXX.png
         
 python a_probe_direction/analyze_projection_scores.py \
-  --input_csv output_phi_1000/probe_direction/difficulty_projection_scores.csv \
-  --output_csv output_phi_1000/probe_direction/projection_score_analysis.csv \
-  --figure_dir output_phi_1000/probe_direction/figures \
+  --input_csv output_llama_1000/probe_direction/difficulty_projection_scores.csv \
+  --output_csv output_llama_1000/probe_direction/projection_score_analysis.csv \
+  --figure_dir output_llama_1000/probe_direction/figures \
   --plot_top_k 3 \
   --overwrite
 """

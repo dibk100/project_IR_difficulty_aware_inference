@@ -29,8 +29,8 @@ Rows:
     aggregation, group, layer, n_samples, id_twonn
     
 python d_intrinsic_dimension/compute_layerwise_id.py \
-  --input_npz ../phase02_layerwise_decodability/output_phi_1000/gsm8k_layerwise_hidden_states.npz \
-  --output_csv output_phi_1000/intrinsic_dimension/layerwise_id_profile.csv \
+  --input_npz ../phase02_layerwise_decodability/output_llama_1000/gsm8k_layerwise_hidden_states.npz \
+  --output_csv output_llama_1000/intrinsic_dimension/layerwise_id_profile.csv \
   --overwrite
 """
 
