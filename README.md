@@ -26,7 +26,25 @@
 
 최종적으로는 입력 난이도에 따라 계산량을 동적으로 조절하는 Difficulty-Aware Dynamic Inference Framework를 목표로 한다.
 
+## 📁 Repository Structure(update.2026-06-12)
+난이도 발견(Difficulty Discovery) 단계인 Phase 01~04는 상위 폴더 `Part_A_Difficulty_Discovery/` 아래에 묶여 있다.
+
+```
+project_IR_difficulty_aware_inference/
+├── README.md
+├── scripts/                              # 데이터 다운로드 등 공용 스크립트
+└── Part_A_Difficulty_Discovery/          # Phase 01~04 (난이도 정보 발견)
+    ├── phase01_difficulty_verification/      # 난이도 정보 존재 검증
+    ├── phase02_layerwise_decodability/       # 레이어별 difficulty decodability
+    ├── phase03_difficulty_signal_discovery/  # difficulty 신호 탐색
+    └── phase04_difficulty_subspace/          # difficulty subspace 분석
+```
+
+> 각 phase의 `run_all.sh` 및 cross-phase 상대경로(`../phaseXX`)는 phase 폴더들이 함께 이동했으므로 그대로 동작한다.
+
 ## 🧪 Research Roadmap(update.2026-06-10) 
+> Phase 01~04 = **Part A (Difficulty Discovery)**, 이후 동적 추론 제어 단계는 후속 Part로 분리 예정.
+
 ### Phase 01 : Difficulty Information Verification(Completed ✅)
 
 Research Question : Hidden Representation 안에 입력 난이도와 관련된 정보가 존재하는가?
